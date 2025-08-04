@@ -2,10 +2,14 @@ import requests
 from dotenv import load_dotenv
 import os
 import time 
+import logging
 #List out constants such as base URI, page id and doc id
 BASE_URI = "https://coda.io/apis/v1/docs"
 DOC_ID = "b28tqhh75p"
 PAGE_ID = "canvas-ejAOsSah6d"
+
+#Set up log level and message format
+logging.basicConfig(level=logging.ERROR, format='%(levelname)s : %(message)s')
 
 
 def coda_content_export():
@@ -23,7 +27,8 @@ def coda_content_export():
         page_req_id = poll_link.split('/')[-1]
         return page_req_id
     except requests.exceptions.HTTPError as req_e:
-        print(f'HTTP error: {req_e}')
+        #print(f'HTTP error: {req_e.response.status_code}')
+        logging.exception(f'HTTP error: {req_e.response.status_code}')
         #Code returned an HTTP error. Return 'HTTP error' as flag value.
         return 'HTTP error'
 
@@ -44,7 +49,8 @@ def coda_get_export_status(req_id):
                 return coda_download_link
             time.sleep(5)
     except requests.exceptions.HTTPError as res_e:
-        print(f'HTTP error: {res_e}')
+        #print(f'HTTP error: {res_e.response.status_code}')
+        logging.exception(f'HTTP error: {res_e.response.status_code}')
         #HTTP error with getting status. return 'No download link' as a flag value.
         return 'No download link'
 
